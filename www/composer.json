@@ -1,0 +1,26 @@
+{
+    "name": "bi/pure",
+    "description": "Small self project to refresh php basics, it is a basic laravel project from scratch.",
+    "require": {
+        "illuminate/collections": "^10.41"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.32"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "Core/",
+            "Http\\": "Http/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gabriela Dias"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

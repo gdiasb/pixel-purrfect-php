@@ -1,0 +1,228 @@
+# $host = "db";
+# $username = "root";
+# $password = "2401";
+# $db = "blog_db";
+
+# try {
+#    $conn = new PDO("mysql:host=$host;dbname=$db", $username, $password);
+#    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+#    echo "<h2>Success</h2>";
+
+#} catch (PDOException $e) {
+#    echo $e->getMessage();
+#} 
+
+# ERRO could not find driver:
+# Basta instalar o mysqli: docker compose exec -it (nome do container, nesse exemplo é php) docker-php-ext-install mysqli pdo pdo_mysql
+
+# $db = 'mysql';
+# $host = 'db'; /* If you are using Docker, the host is the name of the database container, not localhost! */
+// $port = 3306;
+// $db_name = 'blog_db';
+// $user = 'root';
+// $password = '2401';
+
+// $dsn = "{$db}:host={$host};port={$port};dbname={$db_name};charset=utf8mb4";
+
+// $conn = new PDO($dsn, $user, $password);
+// $statement = $conn->prepare("Select * from blog_posts");
+// $statement->execute();
+
+// $posts = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+// var_dump($posts);
+
+// foreach($posts as $post) {
+//     echo "<li>" . $post["post_title"] . "</li>";
+// } 
+
+
+
+/*     public function __construct(string $db, string $host, int $port, string $db_name, string $user, string $password)
+    {
+        $dsn = "{$db}:host={$host};port={$port};dbname={$db_name};charset=utf8mb4";
+
+        $this->conn = new PDO($dsn, $user, $password);
+    } */
+
+
+    // $_SESSION['db'] = new Database($config['database']); Gera o erro Uncaught Exception: Serialization of 'PDO' is not allowed
+
+
+// $config = require ("./config.php");
+// $db = new Database($config['database']);
+// $posts = $db->query('Select * from blog_posts')->fetchAll();
+
+// $id = $_GET['id'];
+// $author = $_GET['author'];
+// $query = $db->query('Select * from blog_posts where id = :id AND post_author = :post_author', [':id' => $id, ':post_author' => $author])->fetchAll();
+// var_dump($query);
+// $_SESSION['posts'] = $posts;
+
+/* foreach($posts as $post) 
+{
+    echo "<li>" . $post["post_title"] . "</li>";
+}  */
+
+// routes.php
+// return [
+//     "/" => 'controllers/index.php',
+//     '/about' => 'controllers/about.php',
+    
+//     '/posts' => 'controllers/posts/index.php',
+//     '/post' => 'controllers/posts/show.php',
+//     '/post/create' => 'controllers/posts/create.php'
+// ];
+
+
+// router.php
+<?php
+
+$uri = parse_url($_SERVER['REQUEST_URI'])['path'];
+
+/* if ($uri === '/') {
+    require 'controllers/index.php';
+} elseif ($uri === '/about') {
+    require "./controllers/about.php";
+} */
+
+$routes = require(base_path('routes.php')); 
+
+function routeToController($uri, $routes) {
+    array_key_exists($uri, $routes) ? require base_path($routes[$uri]) : abort();
+}
+
+function abort($code = 404): void {
+    http_response_code($code);
+    require base_path("views/errors/{$code}.view.php");
+    die();
+}
+
+routeToController($uri, $routes);
+
+
+// create.php
+// $errors = [];
+
+// if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+//     if (! Validator::validatePost($_POST['post_body'])) {
+//         $errors['post_body'] = 'The text must have one or more characters and less of 10,000';
+//     } else if (! Validator::validatePost($_POST['post_title'], 1, 1000)) {
+//         $errors['post_title'] = 'The title must have one or more characters and less of 1000';
+//     }
+
+
+
+//     if (empty($errors)) {
+//         $db->query('INSERT INTO blog_posts(create_time,author_id,post_body,post_title) VALUES(:create_time, :author_id, :post_body, :post_title)', [
+//             'create_time' => date("Y-m-d H:i:s"),
+//             'author_id' => 1,
+//             'post_body' => htmlspecialchars($_POST['post_body']),
+//             'post_title' => htmlspecialchars($_POST['post_title'])
+//         ]);
+//     }
+// }
+
+
+// view("posts/create.view.php", [
+//     'errors' => $errors
+// ]);
+
+
+// Como reduzir if -> crie classes com funções!
+if ($route['middleware']) {
+    // Delegado para a função Middleware
+    // $middleware = Middleware::MAP[$route['middleware']];
+    // (new $middleware)->handle();
+}
+
+
+CREATE TABLE blog_posts(  
+    id int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
+    create_time DATETIME NOT NULL COMMENT 'Create Time',
+    author_id int NOT NULL,
+    post_title VARCHAR(255) not null, 
+    post_body VARCHAR not null
+) COMMENT '';
+
+
+CREATE TABLE users(  
+    id int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
+    username VARCHAR(255) not null,
+    name VARCHAR(255), 
+    email VARCHAR(255) not null,
+    password VARCHAR(255) not null
+) COMMENT '';
+
+ALTER TABLE `blog_posts` ADD FOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON DELETE CASCADE;
+
+
+version: '3'
+
+services:
+ web:
+  image: nginx:latest
+  container_name: nginx
+  restart: always
+  ports:
+    - "80:80"
+  volumes:
+    - ./www:/www
+    - ./site.conf:/etc/nginx/conf.d/site.conf
+  links:
+    - "php"
+ 
+ php:
+  build:
+   context: .
+   dockerfile: Dockerfile
+  #image: php:8.3-fpm
+  container_name: php
+  volumes:
+    - ./www:/www
+  links:
+    - "db"
+  # command: sh -c "docker-php-ext-install mysqli pdo pdo_mysql"
+
+
+ db:
+  image: mysql:latest
+  container_name: mysql
+  ports:
+    - "3306:3306"
+  restart: always
+  environment:
+   MYSQL_ROOT_PASSWORD: 2401
+   MYSQL_DATABASE: blog_db
+  volumes: 
+   - ./docker-init:/docker-entrypoint-initdb.d/
+
+ composer:
+  image: composer
+  volumes:
+   - ./www/:/app/
+  command: install
+
+  # docker compose exec -it php docker-php-ext-install mysqli pdo pdo_mysql
+
+      // public function validate(string $username, string $email, string $password, string $check_password): bool {
+        
+    //     if (! Validator::validateUsername($username)) {
+    //         $this->errors['username'] = 'Username invalid';
+    //     } 
+    //     if (! Validator::validateEmail($email)) {
+    //         $this->errors['email'] = 'E-mail not valid';
+    //     }
+
+    //     if (! Validator::validatePassword($password)) {
+    //         $this->errors['password'] = 'Password should have a minimum of 8 characters, and include at least one uppercase letter, a number and a special character';
+    //     }
+
+    //     if (! Validator::checkPassword($password, $check_password)) {
+    //         $this->errors['check_password'] = 'Passwords do not match';
+    //     }
+
+    //     return empty($errors);
+
+    // }

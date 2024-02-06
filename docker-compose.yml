@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+ web:
+  image: nginx:latest
+  container_name: nginx
+  restart: always
+  ports:
+    - "80:80"
+  volumes:
+    - ./www:/www
+    - ./site.conf:/etc/nginx/conf.d/site.conf
+  links:
+    - "php"
+ 
+ php:
+  build:
+   context: .
+   dockerfile: Dockerfile
+  container_name: php
+  volumes:
+    - ./www:/www
+  links:
+    - "db"
+
+ db:
+  image: mysql:latest
+  container_name: mysql
+  ports:
+    - "3306:3306"
+  restart: always
+  environment:
+   MYSQL_ROOT_PASSWORD: 2401
+   MYSQL_DATABASE: blog_db
+  volumes: 
+   - ./docker-init:/docker-entrypoint-initdb.d/
+
+ composer:
+  image: composer
+  volumes:
+   - ./www/:/app/
+  command: install
