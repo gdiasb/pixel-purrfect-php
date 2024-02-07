@@ -3,7 +3,8 @@
 <?php view('partials/navbar.php') ?>
 
 
-<form class=" container ms-5 bg-white bg-opacity-50 rounded" method="POST">
+<form class=" container ms-5 bg-white bg-opacity-50 rounded" method="POST" action="/profile">
+    <input type="hidden" name="_method" value="PATCH" />
     <div class="row g-3 mt-5 ms-5">
         <div class="col-4 mt-5">
             <div class="input-group">
@@ -18,7 +19,7 @@
         </div>
         <div class="col-4 mt-5">
             <div class="input-group">
-                <input type="text" class="form-control" name="name" placeholder="Name" value="<?= $user['name'] ?? 'Username' ?>" />
+                <input type="text" class="form-control" name="name" placeholder="Name" value="<?= $user['name'] ?? '' ?>" />
             </div>
         </div>
     </div>

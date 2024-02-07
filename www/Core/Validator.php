@@ -22,4 +22,8 @@ class Validator {
     public static function checkPassword(string $password, string $check_password): bool {
         return strcmp($password, $check_password) == 0;
     }
+
+    public static function validateName(string $name): bool {
+        return preg_match('/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/', $name);
+    }
 }
