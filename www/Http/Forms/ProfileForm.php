@@ -1,7 +1,9 @@
 <?php
+
+namespace Http\Forms;
+
 use Core\ValidationException;
 use Core\Validator;
-use Http\Forms\Form;
 
 class ProfileForm implements Form {
 
@@ -18,13 +20,13 @@ class ProfileForm implements Form {
             $this->errors['email'] = 'E-mail not valid';
         }
 
-        if (! Validator::validatePassword($attributes['password'])) {
-            $this->errors['password'] = 'Password should have a minimum of 8 characters, and include at least one uppercase letter, a number and a special character';
-        }
+        // if (! Validator::validatePassword($attributes['password'])) {
+        //     $this->errors['password'] = 'Password should have a minimum of 8 characters, and include at least one uppercase letter, a number and a special character';
+        // }
 
-        if (! Validator::checkPassword($attributes['password'], $attributes['check_password'])) {
-            $this->errors['check_password'] = 'Passwords do not match';
-        }
+        // if (! Validator::checkPassword($attributes['password'], $attributes['check_password'])) {
+        //     $this->errors['check_password'] = 'Passwords do not match';
+        // }
     }
 
 

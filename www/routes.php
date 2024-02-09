@@ -22,4 +22,5 @@ $router->post('/session', 'session/store.php')->only('guest');
 $router->delete('/session', 'session/destroy.php')->only('auth');
 
 $router->get('/profile', 'profile/index.php')->only('auth');
+$router->get('/profile/edit', 'profile/edit.php')->only('auth');
 $router->patch('/profile', 'profile/update.php')->only('auth');
