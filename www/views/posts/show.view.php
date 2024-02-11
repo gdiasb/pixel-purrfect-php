@@ -17,14 +17,14 @@
                 <div class="col-1">
                 <form method="POST" >
                     <input type="hidden" name="_method" value="DELETE" />
-                    <button class="btn btn-md btn-danger">
-                        Delete
+                    <button class="btn btn-lg btn-danger">
+                        <i class="bi bi-trash"></i>
                     </button>
                 </form>
                 </div>
-                <div class="col-1 pe-4">
-                <button class="btn btn-md btn-secondary">
-                    <a class="text-white link-underline link-underline-opacity-0 " href="/post/edit?id=<?= $post['id'] ?>">Edit</a>
+                <div class="col-1">
+                <button class="btn btn-lg btn-secondary">
+                    <a class="text-white link-underline link-underline-opacity-0 " href="/post/edit?id=<?= $post['id'] ?>"><i class="bi-pencil"></i></a>
                 </button>
                 </div>
             </div>

@@ -29,7 +29,11 @@ class Database
         return $this->statement->fetch();
     }
 
-
+    function abort(int $code = 404): void {
+        http_response_code($code);
+        require base_path("views/errors/{$code}.view.php");
+        die();
+    }
 
     public function findOrFail(): mixed 
     {
